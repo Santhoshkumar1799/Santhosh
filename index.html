@@ -12,3 +12,576 @@ import csv
 from selenium import webdriver
 import time
 import os
+import pandas as pd
+import numpy as np
+import win32com
+import win32com.client
+from datetime import date
+from colorama import win32
+from dateutil.utils import today
+
+from colored import fg
+
+import pandas as pd
+import numpy as np
+import win32com
+import win32com.client
+from datetime import date
+from colorama import win32
+from dateutil.utils import today
+import sys
+import glob
+import pandas as pd
+import csv
+from selenium import webdriver
+import time
+import os
+
+import pandas as pd
+import numpy as np
+import win32com
+import win32com.client
+from datetime import date
+from colorama import win32
+from dateutil.utils import today
+
+from colored import fg
+
+color = fg('Yellow')
+color1 = fg('green')
+color2 = fg('red')
+print(color + '------------------Hello Alexa Connected Devices and Experience (ACDE)-----------------------------------!!!\n\n\n')
+print(color + "Alexa Connected Devices and Experience Test Report (ACDE) \n\n")
+
+Project_name = input(color1 + "Enter the Project Name\n")
+Test_version = input(color1 + "Enter the Fixversion of the project\n")
+option = webdriver.ChromeOptions()
+driver = webdriver.Chrome(options=option)
+Test_version_link = "https://issues.labcollab.net/secure/enav/#?query=project%20%3D%20"+Project_name+"%20AND%20fixVersion%20%20%3D%20%22"+Test_version+"%22&view=list&searchType=advance"
+driver.get("https://issues.labcollab.net/issues/?jql=")
+time.sleep(5)
+driver.find_element("xpath", "(//span[@class='largeTextNoWrap indentNonCollapsible'])[1]").click()
+time.sleep(5)
+driver.find_element("xpath", "//input[@name='user_name']").click()
+time.sleep(5)
+driver.find_element("xpath", "//input[@name='user_name']").send_keys("kuksanth")
+time.sleep(5)
+driver.find_element("xpath", "//input[@name='password']").click()
+time.sleep(5)
+driver.find_element("xpath", "//input[@name='password']").send_keys("K$K17111999")
+time.sleep(5)
+driver.find_element("xpath", "//input[@name='commit']").click()
+time.sleep(5)
+driver.get("https://issues.labcollab.net/issues/?jql=")
+driver.maximize_window()
+time.sleep(5)
+driver.get("https://issues.labcollab.net/secure/enav/#?query=&view=list&offset=0&searchType=advance");
+time.sleep(5)
+driver.find_element("xpath", "//textarea[@id='zqltext']").click()
+time.sleep(3)
+try:
+    driver.find_element("xpath", "//a[@data-id='advanced']").click()
+    time.sleep(3)
+    driver.find_element("xpath", "//textarea[@id='zqltext']").send_keys(
+        "project = \"" + Project_name + "\" AND fixVersion  = \"" + Test_version + "\"")
+    time.sleep(3)
+except:
+    driver.find_element("xpath", "//textarea[@id='zqltext']").send_keys(
+        "project = \"" + Project_name + "\" AND fixVersion  = \"" + Test_version + "\"")
+    time.sleep(3)
+
+time.sleep(6)
+driver.find_element("xpath", "//span[@title='Search']").click()
+time.sleep(3)
+test_link = driver.current_url
+time.sleep(6)
+driver.find_element("xpath", "//a[@id='exportLink']").click()
+time.sleep(10)
+driver.find_element("xpath", "//a[@id='csvExecutionId']").click()
+time.sleep(50)  # Change the time if needed or it shows error in execution defects.
+
+list_of_files = glob.glob(r"C:\Users\kuksanth\Downloads\*.csv")
+latest_file = sorted(list_of_files, key=os.path.getmtime)
+
+tc = 'TC'
+
+df = pd.read_csv(latest_file[-1])
+
+df1 = df.loc[:, ['ExecutionDefects']]
+df2 = df1.dropna(axis=0)
+df3 = df2.drop_duplicates()
+ed = df3['ExecutionDefects'].str.split(',')
+df3.loc[:, ['num']] = ed
+col_list = df3.num.values.tolist()
+print(col_list)
+my_list_str = str(col_list)
+print(my_list_str)
+res1 = str(my_list_str)[1:-1]
+content = []
+print(res1)
+res = str(res1).replace('[', '').replace(']', '')
+print(res)
+# ======================================================================================================
+mf = pd.read_csv(latest_file[-1])
+
+df1 = mf.loc[:, ['ExecutionId', 'ExecutionStatus']]
+df2 = df1.dropna(axis=0)
+df = df2.drop_duplicates()
+
+print(len(df))
+
+specific_status1 = ['PASS']
+specific_status2 = ['FAIL']
+specific_status3 = ['UNEXECUTED']
+specific_status4 = ['BLOCKED']
+specific_status5 = ['NOT APPLICABLE']
+specific_status6 = ['PASS WITH ISSUES']
+Tc_Pass = df[df['ExecutionStatus'].isin(specific_status1)]
+Tc_Fail = df[df['ExecutionStatus'].isin(specific_status2)]
+Tc_Unexecuted = df[df['ExecutionStatus'].isin(specific_status3)]
+Tc_Blocked = df[df['ExecutionStatus'].isin(specific_status4)]
+Tc_NotApplicable = df[df['ExecutionStatus'].isin(specific_status5)]
+Tc_pass_with_issues = df[df['ExecutionStatus'].isin(specific_status6)]
+Tc_total = df['ExecutionStatus']
+
+print(len(Tc_total))
+pass_percentage = (len(Tc_Pass) / len(Tc_total))
+pass_percentage_value = ("{:.0%}".format(pass_percentage))
+
+pass_with_percentage = (len(Tc_pass_with_issues) / len(Tc_total))
+pass_with_percentage_value = ("{:.0%}".format(pass_with_percentage))
+
+fail_percentage = (len(Tc_Fail) / len(Tc_total))
+fail_percentage_value = ("{:.0%}".format(fail_percentage))
+
+unexecuted_percentage = (len(Tc_Unexecuted) / len(Tc_total))
+unexecuted_percentage_value = ("{:.0%}".format(unexecuted_percentage))
+
+blocked_percentage = (len(Tc_Blocked) / len(Tc_total))
+blocked_percentage_value = ("{:.0%}".format(blocked_percentage))
+
+NotApplicable_percentage = (len(Tc_NotApplicable) / len(Tc_total))
+NotApplicable_percentage_value = ("{:.0%}".format(NotApplicable_percentage))
+
+print(pass_percentage_value)
+print(fail_percentage_value)
+print(pass_with_percentage_value)
+# ======================================================================================================
+
+# ======================================================================================================
+
+option = webdriver.ChromeOptions()
+driver = webdriver.Chrome(options=option)
+
+ab = col_list
+driver.get("https://issues.labcollab.net/issues/?jql=")
+time.sleep(5)
+driver.find_element("xpath", "(//span[@class='largeTextNoWrap indentNonCollapsible'])[1]").click()
+time.sleep(5)
+driver.find_element("xpath", "//input[@name='user_name']").click()
+time.sleep(5)
+driver.find_element("xpath", "//input[@name='user_name']").send_keys("kuksanth")
+time.sleep(5)
+driver.find_element("xpath", "//input[@name='password']").click()
+time.sleep(5)
+driver.find_element("xpath", "//input[@name='password']").send_keys("K$K17111999")
+time.sleep(5)
+driver.find_element("xpath", "//input[@name='commit']").click()
+time.sleep(5)
+driver.get("https://issues.labcollab.net/issues/?jql=")
+driver.maximize_window()
+time.sleep(5)
+driver.get("https://issues.labcollab.net/issues/?jql=")
+try:
+    time.sleep(5)
+    driver.find_element("xpath", "//a[@original-title='Switch to advanced search using JQL']").click()
+    time.sleep(5)
+    driver.find_element("xpath", "//textarea[@id='advanced-search']").send_keys(
+        "issuetype = Bug AND key in (" + res + ")")
+    time.sleep(5)
+except:
+    time.sleep(5)
+    driver.find_element("xpath", "//textarea[@id='advanced-search']").click()
+    time.sleep(5)
+    driver.find_element("xpath", "//textarea[@id='advanced-search']").send_keys(
+        "issuetype = Bug AND key in (" + res + ")")
+    time.sleep(5)
+time.sleep(10)
+driver.find_element("xpath", "//button[@class='aui-button aui-button-primary search-button']").click()
+time.sleep(10)
+driver.find_element("xpath", "(//span[@class='aui-button-label'])[2]").click()
+time.sleep(3)
+driver.find_element("xpath", "//a[@id='currentCsvFields']").click()
+time.sleep(3)
+driver.find_element("xpath", "//button[@id='csv-export-dialog-export-button']").click()
+time.sleep(10)
+
+tc = "TC"
+# finally the Excel gets downloaded
+list_of_files = glob.glob(r"C:\Users\kuksanth\Downloads\*.csv")
+latest_file = sorted(list_of_files, key=os.path.getmtime)
+# It finds the latest downloaded CSV file in tha folder
+# driver.get(latest_file[-1])
+bf = pd.read_csv(latest_file[-1])
+
+ab = pd.to_datetime(bf['Created']).dt.strftime("%m/%d/%Y")
+bd = pd.to_datetime(ab)
+
+cd = (pd.to_datetime('today') - bd).dt.days
+bf['DayNumber'] = cd
+subset = bf[['DayNumber']]
+bf.loc[:, subset.columns] = np.where(bf['DayNumber'] <= 1, 'New', 'Existing')
+bf['NE'] = bf.loc[:, subset.columns]
+
+specific_status = ['Abandon', 'Closed', 'Resolved', 'Done', 'Canceled']
+specific_status1 = ['Closed', 'Resolved']
+bf1 = bf[~bf['Status'].isin(specific_status)]
+bf2 = bf1.sort_values(by=['NE', 'Priority'], ascending=[False, True])
+bf3 = bf2.loc[:,
+      ['Issue key', 'Reporter', 'Summary', 'Created', 'Priority', 'Status', 'Custom field (Test Notes)', 'NE',
+       'Assignee', 'Updated']]
+data = bf3
+print(data)
+m1 = bf2.loc[:, ['Custom field (Test Notes)']]
+m2 = m1.replace('\r', ' ', regex=True)
+bf4 = m2.replace('\n', '<br> ', regex=True)
+data1 = bf4
+
+mailbody = """
+             <tr bgcolor=#9FC5E8>
+            <font size=\"2\" face=\"Calibri\"><b> <br><br></b>
+            <table cellspacing= 2 " cellpadding= 10  bgcolor= #000000 >
+            <tr bgcolor=#9FC5E8>
+            <font size=\"2\" face=\"Calibri\">
+            <th align=center> No  </th>
+            <th align=center> Defect ID  </th>
+            <th align=center> Summary  </th>
+            <th align=center> Priority   </th>
+            <th align=center> Status   </th>
+            <th align=center> Adhoc/TC  </th>
+            <th align=center> Created Date (MM/DD/YYYY) </th>
+            <th align=center> Updated Date (MM/DD/YYYY) </th>
+            <th align=center> No of Days Defect is in Open state </th>
+            <th align=center> Assignee </th>
+            <th align=center> Reporter  </th>
+            <th align=center> New/Existing </th></font></tr>"""
+
+Task_Details = """
+<br><font face=\"Calibri\"><font size=3>
+<b> Task Name:   \n</b><br><br>
+<b> Test Report:  \n</b><br><br>
+<b> Task Intake Jira:   \n</b><br>"""
+
+New_table = """
+        <tr bgcolor=#9FC5E8>
+            <font size=\"2\" face=\"Calibri\"><b> <br><br></b>
+            <table cellspacing= 2 " cellpadding= 20  bgcolor= #000000 >
+            <tr bgcolor=#9FC5E8>
+            <font size=\"2\" face=\"Calibri\">
+            <th align=center> Current Release </th>
+            <th align=center> Environment  </th>
+            <th align=center> RAG Status </th>
+            <th align=center> Comments </th></font></tr>
+
+            <tbody>
+             <tr bgcolor=#FFFFFF>
+            <td>  </td >
+            <td>  </td >
+            <td>  </td >
+            <td>  </td >
+            </tr>
+"""
+Existing_summary = """
+        <tr bgcolor=#9FC5E8>
+            <font size=\"2\" face=\"Calibri\"><b> <br><br></b>
+            <table cellspacing= 2 " cellpadding= 20  bgcolor= #000000 >
+            <tr bgcolor=#9FC5E8>
+            <font size=\"2\" face=\"Calibri\">
+            <th align=center> Blocked TC ID </th>
+            <th align=center> Query ID </th>
+            <th align=center> Query Summary </th></font></tr>
+
+            <tbody>
+             <tr bgcolor=#FFFFFF>
+            <td>  </td >
+            <td>  </td >
+            <td>  </td >
+            </tr>
+
+            <tbody>
+             <tr bgcolor=#FFFFFF>
+            <td>  </td >
+            <td>  </td >
+            <td>  </td >
+            </tr>
+
+            <tbody>
+             <tr bgcolor=#FFFFFF>
+            <td>  </td >
+            <td>  </td >
+            <td>  </td >
+            </tr>
+"""
+account_Details = """
+        <tr bgcolor=#9FC5E8>
+            <font size=\"2\" face=\"Calibri\"><b> <br><br></b>
+            <table cellspacing= 2 " cellpadding= 20  bgcolor= #000000 >
+            <tr bgcolor=#9FC5E8>
+            <font size=\"2\" face=\"Calibri\">
+            <th align=center> Accounts </th>
+            <th align=center> Customer ID </th></font></tr>
+
+            <tbody>
+             <tr bgcolor=#FFFFFF>
+            <td align=center>  adcqa+lapda1@amazon.com  </td >
+            <td align=center> A2R8146DO4JKMN </td >
+            </tr>
+            </tbody>
+
+            <tbody>
+             <tr bgcolor=#FFFFFF>
+            <td align=center>   </td >
+            <td align=center>  </td >
+            </tr>
+            </tbody>
+
+"""
+device_details = """
+<tr bgcolor=#9FC5E8>
+            <font size=\"2\" face=\"Calibri\"><b> <br><br></b>
+            <table cellspacing= 2 " cellpadding= 20  bgcolor= #000000 >
+            <tr bgcolor=#9FC5E8>
+            <font size=\"2\" face=\"Calibri\">
+            <th align=center> Device </th>
+            <th align=center> FOS Type </th>
+            <th align=center> Note </th>
+            <th align=center> Configuration </th>
+            <th align=center> DSN </th>
+            <th align=center> Build </th></font></tr>
+
+            <tbody>
+             <tr bgcolor=#FFFFFF>
+            <td align=center> </td >
+            <td align=center>  </td >
+            <td align=center>  </td >
+            <td align=center> #C1 </td >
+            <td align=center>  </td >
+            <td >  </td >
+            </tr>
+            </tbody>
+
+            <tbody>
+             <tr bgcolor=#FFFFFF>
+            <td align=center> </td >
+            <td align=center>  </td >
+            <td align=center>  </td >
+            <td align=center> #C2 </td >
+            <td align=center>  </td >
+            <td >  </td >
+            </tr>
+            </tbody>
+
+            <tbody>
+             <tr bgcolor=#FFFFFF>
+            <td align=center> </td >
+            <td align=center>  </td >
+            <td align=center>  </td >
+            <td align=center> #C3 </td >
+            <td align=center>  </td >
+            <td >  </td >
+            </tr>
+            </tbody>
+
+            <tbody>
+             <tr bgcolor=#FFFFFF>
+            <td align=center> </td >
+            <td align=center>  </td >
+            <td align=center>  </td >
+            <td align=center> #C4 </td >
+            <td align=center>  </td >
+            <td >  </td >
+            </tr>
+            </tbody>
+"""
+configuration_type = """
+<tr bgcolor=#9FC5E8>
+            <font size=\"2\" face=\"Calibri\"><b> <br><br></b>
+            <table cellspacing= 2 " cellpadding= 20  bgcolor= #000000 >
+            <tr bgcolor=#9FC5E8>
+            <font size=\"2\" face=\"Calibri\">
+            <th align=center> Type </th>
+            <th align=center> Note </th>
+            <th align=center> Device </th>
+            <th align=center> Config #1 </th>
+            <th align=center> Config #2 </th>
+            <th align=center> Config #3 </th>
+            <th align=center> Config #4 </th></font></tr>
+
+            <tbody>
+             <tr bgcolor=#FFFFFF>
+            <td align=center> Wifi (LAP)  </td >
+            <td align=center> Cloud and Local route</td >
+            <td align=center> TP-Link  </td >
+            <td align=center>   </td >
+            <td align=center>   </td >
+            <td align=center>    </td >
+            <td align=center>    </td >
+            </tr>
+            </tbody>
+
+            <tbody>
+             <tr bgcolor=#FFFFFF>
+            <td align=center> Wifi (LAP)  </td >
+            <td align=center> Cloud and Local route</td >
+            <td align=center> Yeelight  </td >
+            <td align=center>   </td >
+            <td align=center>   </td >
+            <td align=center>    </td >
+            <td align=center>    </td >
+            </tr>
+            </tbody>
+
+             <tbody>
+             <tr bgcolor=#FFFFFF>
+            <td align=center> Zigbee/BLE  </td >
+            <td align=center> Local route only</td >
+            <td align=center> Philips Hue </td >
+            <td align=center>   </td >
+            <td align=center>   </td >
+            <td align=center>    </td >
+            <td align=center>    </td >
+            </tr>
+            </tbody>
+
+             <tbody>
+             <tr bgcolor=#FFFFFF>
+            <td align=center> Wifi  </td >
+            <td align=center> Cloud and Local route </td >
+            <td align=center> Philips Hue with Bridge </td >
+            <td align=center>   </td >
+            <td align=center>   </td >
+            <td align=center>    </td >
+            <td align=center>    </td >
+            </tr>
+            </tbody>
+
+             <tbody>
+             <tr bgcolor=#FFFFFF>
+            <td align=center> BLE Mesh </td >
+            <td align=center> Local route only </td >
+            <td align=center> Sengled BLE Mesh </td >
+            <td align=center>   </td >
+            <td align=center>   </td >
+            <td align=center>    </td >
+            <td align=center>    </td >
+            </tr>
+            </tbody>
+
+            <tbody>
+             <tr bgcolor=#FFFFFF>
+            <td align=center> Wifi </td >
+            <td align=center> Cloud and Local route </td >
+            <td align=center> Wemo </td >
+            <td align=center>   </td >
+            <td align=center>   </td >
+            <td align=center>    </td >
+            <td align=center>    </td >
+            </tr>
+            </tbody>
+
+"""
+Test_Execution = """
+ <tr bgcolor=#9FC5E8>
+            <font size=\"2\" face=\"Calibri\"><b> <br><br></b>
+            <table cellspacing= 2 " cellpadding= 20  bgcolor= #000000 >
+            <tr bgcolor=#9FC5E8>
+            <font size=\"2\" face=\"Calibri\">
+            <th align=center> Test Version </th>
+            <th align=center> PASS%  </th>
+            <th align=center> FAIL%   </th>
+            <th align=center> UNEXECUTED%   </th>
+            <th align=center> BLOCKED%   </th>
+            <th align=center> NOT APPLICABLE% </th>
+            <th align=center> PASS WITH ISSUES% </th></font></tr>
+            <tbody>
+            <tr bgcolor=#FFFFFF>
+            <td><a href =""" + Test_version_link + """>""" + str(Test_version) + """</a></td>
+            <td align=center>""" + pass_percentage_value + """</td >
+            <td align=center>""" + fail_percentage_value + """ </td >
+            <td align=center>""" + unexecuted_percentage_value + """</td >
+            <td align=center>""" + blocked_percentage_value + """ </td >
+            <td align=center>""" + NotApplicable_percentage_value + """ </td >
+            <td align=center>""" + pass_with_percentage_value + """</td >
+            </tr>
+"""
+
+for i in range(len(bf1)):
+    try:
+        up = pd.to_datetime(data['Updated'].iloc[i]).strftime("%m/%d/%Y")
+        ab = pd.to_datetime(data['Created'].iloc[i]).strftime("%m/%d/%Y")
+        bd = pd.to_datetime(ab)
+        # no.of.days
+        cd = (pd.to_datetime('today') - bd).days
+    except:
+        cd = 0
+
+    tablebody = """<tr bgcolor=#FFFFFF><td>""" + str(
+        i + 1) + """</td><td><a href =https://issues.labcollab.net/browse/""" + str(
+        data['Issue key'].iloc[i]) + """>""" + str(data['Issue key'].iloc[i]) + """ </a></td><td align=center>""" + str(
+        data['Summary'].iloc[i]) + """</td><td align=center>""" + str(
+        data['Priority'].iloc[i]) + """</td><td align=center>""" + str(
+        data['Status'].iloc[i]) + """</td><td align=center>""" + str(tc) + """</td><td align=center>""" + str(
+        ab) + """</td><td align=center>""" + str(
+        up) + """</td><td align=center>""" + str(
+        cd) + """</td><td align=center>""" + str(
+        data['Assignee'].iloc[i]) + """</td><td align=center>""" + str(
+        data['Reporter'].iloc[i]) + """</td><td align=center>""" + str(
+        data['NE'].iloc[i]) + """</td></tr>"""
+    content.append(tablebody)
+
+# ----------------------------------------Mail Par-------------------------------------//
+outlook = win32com.client.Dispatch('outlook.application')
+mail = outlook.CreateItem(0)
+mail.To = 'kuksanth@amazon.com'
+mail.Subject = 'Alexa Connected Devices and Experience Automated Test Report'
+mail.CC = 'kuksanth@amazon.com'
+
+mail.HTMLBody = """
+<style>
+h1 {text-align: center;}
+p {text-align: center;}
+div {text-align: center;}
+</style>
+
+<br><font size=\"3\" face=\"Calibri\"> Hi,</b><br>
+<br><font size=\"3\" face=\"Calibri\"> Please find the OVERALL report,</b><br>
+
+
+""" + str(Task_Details) + """
+""" + str(New_table) + """
+</table>
+<br><font size=\"3\" face=\"Calibri\"><b><u> Test Summary :</b></u><br><br>
+<br><font size=\"3\" face=\"Calibri\"><b><u> Existing Query Summary :</b></u>
+""" + str(Existing_summary) + """
+</table>
+<br><font size=\"3\" face=\"Calibri\"><b><u> Test Execution Details :</b></u>
+""" + str(Test_Execution) + """
+</table>
+<br><font size=\"3\" face=\"Calibri\"><b><u> Defects Summary :</b></u>
+""" + str(mailbody) + """
+""" + str(content)[1:-1].replace(",", "").replace("'", "") + """
+</table>
+<br><font size=\"3\" face=\"Calibri\"><b><u> Account Details :</b></u>
+""" + str(account_Details) + """
+</table>
+<br><font size=\"3\" face=\"Calibri\"><b><u> Device details :</b></u>
+""" + str(device_details) + """
+</table>
+<br><font size=\"3\" face=\"Calibri\"><b><u> 3P appliance configuration type :</b></u>
+""" + str(configuration_type) + """
+</table><br>
+<br><font size=\"3\" face=\"Calibri\"> Thanks, <br>
+
+
+"""
+mail.Send()
